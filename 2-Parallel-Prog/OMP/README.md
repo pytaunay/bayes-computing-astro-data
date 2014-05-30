@@ -6,7 +6,7 @@ To adjust the number of threads, edit the environment variable OMP_NUM_THREADS. 
 export OMP_NUM_THREADS=4
 ```
 For CSH users:
-```bash
+```csh
 setenv OMP_NUM_THREADS 4
 ```
 
