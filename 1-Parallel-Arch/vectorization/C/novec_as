@@ -1,0 +1,334 @@
+# mark_description "Intel(R) C Intel(R) 64 Compiler XE for applications running on Intel(R) 64, Version 13.0.0.079 Build 2012073";
+# mark_description "1";
+# mark_description "-c -Fanovec_as -O1 -std=c99 -fopenmp";
+	.file "main.c"
+	.text
+..TXTST0:
+# -- Begin  main
+# mark_begin;
+       .align    2,0x90
+	.globl main
+main:
+..B1.1:                         # Preds ..B1.0
+..___tag_value_main.1:                                          #8.12
+        pushq     %r12                                          #8.12
+..___tag_value_main.3:                                          #
+        pushq     %r13                                          #8.12
+..___tag_value_main.5:                                          #
+        pushq     %r14                                          #8.12
+..___tag_value_main.7:                                          #
+        pushq     %r15                                          #8.12
+..___tag_value_main.9:                                          #
+        pushq     %rbx                                          #8.12
+..___tag_value_main.11:                                         #
+        pushq     %rbp                                          #8.12
+..___tag_value_main.13:                                         #
+        pushq     %rsi                                          #8.12
+..___tag_value_main.15:                                         #
+        pushq     $3                                            #8.12
+        popq      %rdi                                          #8.12
+..___tag_value_main.16:                                         #8.12
+        call      __intel_new_proc_init                         #8.12
+..___tag_value_main.17:                                         #
+                                # LOE
+..B1.23:                        # Preds ..B1.1
+        stmxcsr   (%rsp)                                        #8.12
+        movl      $.2.3_2_kmpc_loc_struct_pack.1, %edi          #8.12
+        xorl      %esi, %esi                                    #8.12
+        orl       $32832, (%rsp)                                #8.12
+        xorl      %eax, %eax                                    #8.12
+        ldmxcsr   (%rsp)                                        #8.12
+..___tag_value_main.18:                                         #8.12
+        call      __kmpc_begin                                  #8.12
+..___tag_value_main.19:                                         #
+                                # LOE
+..B1.2:                         # Preds ..B1.23
+        movl      $8000000, %edi                                #10.25
+..___tag_value_main.20:                                         #10.25
+        call      malloc                                        #10.25
+..___tag_value_main.21:                                         #
+                                # LOE rax
+..B1.24:                        # Preds ..B1.2
+        movq      %rax, %r15                                    #10.25
+                                # LOE r15
+..B1.3:                         # Preds ..B1.24
+        movl      $8000000, %edi                                #11.25
+..___tag_value_main.22:                                         #11.25
+        call      malloc                                        #11.25
+..___tag_value_main.23:                                         #
+                                # LOE rax r15
+..B1.25:                        # Preds ..B1.3
+        movq      %rax, %r14                                    #11.25
+                                # LOE r14 r15
+..B1.4:                         # Preds ..B1.25
+        movl      $8000000, %edi                                #12.25
+..___tag_value_main.24:                                         #12.25
+        call      malloc                                        #12.25
+..___tag_value_main.25:                                         #
+                                # LOE rax r14 r15
+..B1.26:                        # Preds ..B1.4
+        movq      %rax, %r13                                    #12.25
+                                # LOE r13 r14 r15
+..B1.5:                         # Preds ..B1.26
+        movl      $8000000, %edi                                #13.24
+..___tag_value_main.26:                                         #13.24
+        call      malloc                                        #13.24
+..___tag_value_main.27:                                         #
+                                # LOE rax r13 r14 r15
+..B1.27:                        # Preds ..B1.5
+        movq      %rax, %r12                                    #13.24
+                                # LOE r12 r13 r14 r15
+..B1.6:                         # Preds ..B1.27
+        xorl      %edi, %edi                                    #15.8
+..___tag_value_main.28:                                         #15.8
+        call      time                                          #15.8
+..___tag_value_main.29:                                         #
+                                # LOE rax r12 r13 r14 r15
+..B1.7:                         # Preds ..B1.6
+        movl      %eax, %edi                                    #15.2
+..___tag_value_main.30:                                         #15.2
+        call      srand                                         #15.2
+..___tag_value_main.31:                                         #
+                                # LOE r12 r13 r14 r15
+..B1.8:                         # Preds ..B1.7
+        xorl      %ebx, %ebx                                    #17.12
+        xorl      %ebp, %ebp                                    #17.12
+                                # LOE rbx rbp r12 r13 r14 r15
+..B1.9:                         # Preds ..B1.10 ..B1.8
+        cvtsi2sd  %ebx, %xmm0                                   #18.19
+        movsd     %xmm0, (%r15,%rbx,8)                          #18.3
+        addsd     .L_2il0floatpacket.19(%rip), %xmm0            #19.23
+        movsd     %xmm0, (%r14,%rbx,8)                          #19.3
+..___tag_value_main.32:                                         #20.11
+        call      rand                                          #20.11
+..___tag_value_main.33:                                         #
+                                # LOE rbx rbp r12 r13 r14 r15 eax
+..B1.10:                        # Preds ..B1.9
+        cvtsi2sd  %eax, %xmm0                                   #20.11
+        movsd     %xmm0, (%r13,%rbx,8)                          #20.3
+        incq      %rbx                                          #17.20
+        cmpq      $1000000, %rbx                                #17.18
+        jl        ..B1.9        # Prob 99%                      #17.18
+                                # LOE rbx rbp r12 r13 r14 r15
+..B1.11:                        # Preds ..B1.10
+..___tag_value_main.34:                                         #23.15
+        call      omp_get_wtime                                 #23.15
+..___tag_value_main.35:                                         #
+                                # LOE rbp r12 r13 r14 r15 xmm0
+..B1.30:                        # Preds ..B1.11
+        movsd     %xmm0, (%rsp)                                 #23.15
+                                # LOE rbp r12 r13 r14 r15
+..B1.13:                        # Preds ..B1.30 ..B1.13
+        movsd     (%r14,%rbp,8), %xmm0                          #26.18
+        mulsd     (%r13,%rbp,8), %xmm0                          #26.24
+        addsd     (%r15,%rbp,8), %xmm0                          #26.24
+        movsd     %xmm0, (%r12,%rbp,8)                          #26.3
+        incq      %rbp                                          #25.20
+        cmpq      $1000000, %rbp                                #25.18
+        jl        ..B1.13       # Prob 99%                      #25.18
+                                # LOE rbp r12 r13 r14 r15
+..B1.14:                        # Preds ..B1.13
+..___tag_value_main.36:                                         #28.15
+        call      omp_get_wtime                                 #28.15
+..___tag_value_main.37:                                         #
+                                # LOE r12 r14 r15 xmm0
+..B1.15:                        # Preds ..B1.14
+        movl      $.L_2__STRING.0, %edi                         #30.2
+        pushq     $1                                            #30.2
+        popq      %rax                                          #30.2
+        subsd     (%rsp), %xmm0                                 #30.2
+..___tag_value_main.38:                                         #30.2
+        call      printf                                        #30.2
+..___tag_value_main.39:                                         #
+                                # LOE r12 r14 r15
+..B1.16:                        # Preds ..B1.15
+        movq      %r12, %rdi                                    #32.2
+..___tag_value_main.40:                                         #32.2
+        call      free                                          #32.2
+..___tag_value_main.41:                                         #
+                                # LOE r14 r15
+..B1.17:                        # Preds ..B1.16
+        movq      %r15, %rdi                                    #33.2
+..___tag_value_main.42:                                         #33.2
+        call      free                                          #33.2
+..___tag_value_main.43:                                         #
+                                # LOE r14
+..B1.18:                        # Preds ..B1.17
+        movq      %r14, %rdi                                    #34.2
+..___tag_value_main.44:                                         #34.2
+        call      free                                          #34.2
+..___tag_value_main.45:                                         #
+                                # LOE
+..B1.19:                        # Preds ..B1.18
+        movl      $.2.3_2_kmpc_loc_struct_pack.12, %edi         #36.9
+        xorl      %eax, %eax                                    #36.9
+..___tag_value_main.46:                                         #36.9
+        call      __kmpc_end                                    #36.9
+..___tag_value_main.47:                                         #
+                                # LOE
+..B1.20:                        # Preds ..B1.19
+        xorl      %eax, %eax                                    #36.9
+                                # LOE
+..B1.32:                        # Preds ..B1.20
+        popq      %rcx                                          #36.9
+..___tag_value_main.48:                                         #
+        popq      %rbp                                          #36.9
+..___tag_value_main.50:                                         #
+        popq      %rbx                                          #36.9
+..___tag_value_main.52:                                         #
+        popq      %r15                                          #36.9
+..___tag_value_main.54:                                         #
+        popq      %r14                                          #36.9
+..___tag_value_main.56:                                         #
+        popq      %r13                                          #36.9
+..___tag_value_main.58:                                         #
+        popq      %r12                                          #36.9
+..___tag_value_main.60:                                         #
+        ret                                                     #36.9
+        .align    2,0x90
+..___tag_value_main.61:                                         #
+                                # LOE
+# mark_end;
+	.type	main,@function
+	.size	main,.-main
+	.data
+	.align 4
+.2.3_2_kmpc_loc_struct_pack.1:
+	.long	0
+	.long	2
+	.long	0
+	.long	0
+	.quad	.2.3_2__kmpc_loc_pack.0
+	.align 4
+.2.3_2__kmpc_loc_pack.0:
+	.byte	59
+	.byte	117
+	.byte	110
+	.byte	107
+	.byte	110
+	.byte	111
+	.byte	119
+	.byte	110
+	.byte	59
+	.byte	109
+	.byte	97
+	.byte	105
+	.byte	110
+	.byte	59
+	.byte	56
+	.byte	59
+	.byte	56
+	.byte	59
+	.byte	59
+	.space 1, 0x00 	# pad
+	.align 4
+.2.3_2_kmpc_loc_struct_pack.12:
+	.long	0
+	.long	2
+	.long	0
+	.long	0
+	.quad	.2.3_2__kmpc_loc_pack.11
+	.align 4
+.2.3_2__kmpc_loc_pack.11:
+	.byte	59
+	.byte	117
+	.byte	110
+	.byte	107
+	.byte	110
+	.byte	111
+	.byte	119
+	.byte	110
+	.byte	59
+	.byte	109
+	.byte	97
+	.byte	105
+	.byte	110
+	.byte	59
+	.byte	51
+	.byte	54
+	.byte	59
+	.byte	51
+	.byte	54
+	.byte	59
+	.byte	59
+	.data
+# -- End  main
+	.section .rodata, "a"
+	.align 8
+.L_2il0floatpacket.19:
+	.long	0xcccccccd,0x4008cccc
+	.type	.L_2il0floatpacket.19,@object
+	.size	.L_2il0floatpacket.19,8
+	.section .rodata.str1.4, "aMS",@progbits,1
+	.align 4
+.L_2__STRING.0:
+	.byte	84
+	.byte	111
+	.byte	116
+	.byte	97
+	.byte	108
+	.byte	32
+	.byte	116
+	.byte	105
+	.byte	109
+	.byte	101
+	.byte	58
+	.byte	32
+	.byte	37
+	.byte	102
+	.byte	10
+	.byte	0
+	.type	.L_2__STRING.0,@object
+	.size	.L_2__STRING.0,16
+	.data
+	.section .note.GNU-stack, ""
+// -- Begin DWARF2 SEGMENT .eh_frame
+	.section .eh_frame,"a",@progbits
+.eh_frame_seg:
+	.align 8
+	.4byte 0x00000014
+	.8byte 0x7801000100000000
+	.8byte 0x0000019008070c10
+	.4byte 0x00000000
+	.4byte 0x0000008c
+	.4byte 0x0000001c
+	.8byte ..___tag_value_main.1
+	.8byte ..___tag_value_main.61-..___tag_value_main.1
+	.byte 0x04
+	.4byte ..___tag_value_main.3-..___tag_value_main.1
+	.4byte 0x028c100e
+	.byte 0x04
+	.4byte ..___tag_value_main.5-..___tag_value_main.3
+	.4byte 0x038d180e
+	.byte 0x04
+	.4byte ..___tag_value_main.7-..___tag_value_main.5
+	.4byte 0x048e200e
+	.byte 0x04
+	.4byte ..___tag_value_main.9-..___tag_value_main.7
+	.4byte 0x058f280e
+	.byte 0x04
+	.4byte ..___tag_value_main.11-..___tag_value_main.9
+	.4byte 0x0683300e
+	.byte 0x04
+	.4byte ..___tag_value_main.13-..___tag_value_main.11
+	.4byte 0x0786380e
+	.byte 0x04
+	.4byte ..___tag_value_main.15-..___tag_value_main.13
+	.2byte 0x400e
+	.byte 0x04
+	.4byte ..___tag_value_main.48-..___tag_value_main.15
+	.4byte 0x04c6380e
+	.4byte ..___tag_value_main.50-..___tag_value_main.48
+	.4byte 0x04c3300e
+	.4byte ..___tag_value_main.52-..___tag_value_main.50
+	.4byte 0x04cf280e
+	.4byte ..___tag_value_main.54-..___tag_value_main.52
+	.4byte 0x04ce200e
+	.4byte ..___tag_value_main.56-..___tag_value_main.54
+	.4byte 0x04cd180e
+	.4byte ..___tag_value_main.58-..___tag_value_main.56
+	.4byte 0x04cc100e
+	.4byte ..___tag_value_main.60-..___tag_value_main.58
+	.4byte 0x0000080e
+	.2byte 0x0000
+# End
