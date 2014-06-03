@@ -3,7 +3,6 @@ function log_likelihood_naive(obs::Array{Float64,2},nobs::Int64,isig::Array{Floa
 
 	N = size(obs,1)
 	RV = Array(Float64,1)
-	LV = Array(Float64,1)
 
 	tot = 0.0
 	for i=1:nobs
@@ -22,26 +21,21 @@ function log_likelihood_vec(obs::Array{Float64,2},nobs::Int64,isig::Array{Float6
 
 	tot = 0.0
 	N = size(mu,1)
-	RV = Array{Float64,2}
 
 	# X-mu
-	RV = obs[:,1:nobs].-mu
+	RV = obs.-mu
 
 	# X-mu * isig
 	tmp = isig*RV
 
-	# Reshape to single array
-	# Some transpose to do to flatten the array
-	RV = reshape(RV,nobs*N,1)
-	tmp = reshape(tmp,nobs*N,1)
-
-	tot = (transpose(RV)*tmp)[1,1]
+	tot = dot(vec(RV),vec(tmp))
 
 	tot += nobs*N*log(2*pi) + nobs*log(abs(det_sig))
 	tot *= (-0.5)
 
 	return tot 
 end
+
 
 print("Reading data...")
 # Load data
