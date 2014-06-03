@@ -23,7 +23,7 @@ function log_likelihood_vec(obs::Array{Float64,2},nobs::Int64,isig::Array{Float6
 	N = size(mu,1)
 
 	# X-mu
-	RV = obs.-mu
+	RV = obs[:,1:nobs]-mu
 
 	# X-mu * isig
 	tmp = isig*RV
@@ -40,18 +40,18 @@ end
 print("Reading data...")
 # Load data
 # MU
-mu = readcsv("mu.csv")
+mu = readcsv("/path/to/mu.csv")
 mu = reshape(mu,size(mu,2))
 
 # X
-X = readcsv("random_vectors.csv")
+X = readcsv("/path/to/random_vectors.csv")
 X = transpose(X)
 
 # inverse sigma
-isig = readcsv("inv_sigma.csv")
+isig = readcsv("/path/to/inv_sigma.csv")
 
 # determinant
-det_sig = readcsv("det_sigma.csv")
+det_sig = readcsv("/path/to/det_sigma.csv")
 det_sig = det_sig[1,1]
 
 print("success\n")
