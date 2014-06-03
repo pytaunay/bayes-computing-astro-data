@@ -1,9 +1,8 @@
-CXX=mpic++
+CXX=icpc
 
-EXEC=mpi_example
+EXEC=io_example
 
-
-CXXFLAGS=-std=c++0x -O3 -xHost -openmp 
+CXXFLAGS=-std=c++0x -openmp -O3 -xHost
 
 INC=-I./inc -I/usr/global/intel/mkl/11.0.0.079/include -I/usr/global/intel-13/boost/1.54.0/include
 LIB=-L/usr/global/intel/mkl/11.0.0.079/lib/intel64 -lmkl_rt -lm
