@@ -1,0 +1,509 @@
+\documentclass[letterpaper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\usepackage{textcomp}
+
+% Title Page
+\title{Parallel Programming for Multi-Core, Distributed Systems, and GPUs \\ Exercises}
+
+\author{Pierre-Yves Taunay\\
+	  Research Computing and Cyberinfrastructure\\
+	    224A Computer Building\\
+	    The Pennsylvania State University\\
+	    University Park\\
+	    \texttt{py.taunay@psu.edu}}
+ \date{June 2014}
+
+\begin{document}
+\maketitle
+
+\newpage
+\section{Introduction}
+\subsection{Compute cluster}
+The exercises will be executed on a compute cluster, either Lion-XV or Lion-GA. Each compute node on Lion-XV features two Ivybridge Xeon CPUs E5-2670, each of them with 10 cores, and 256 GB of memory. The domain name for Lion-XV is 
+\texttt{lionxv.rcc.psu.edu}. Lion-GA is a GPU cluster and features 64 GPUs, spread across 8 compute nodes. The GPUs are either the Tesla M2070 or M2090 model. Each compute node on Lion-GA also features two Nehalem Xeon CPUs X5675, each of them with 6 cores, and 48 GB of memory. The domain
+name for Lion-GA is \texttt{lionga.rcc.psu.edu}. 
+
+To connect to a compute cluster, please follow the instructions corresponding to your Operating System on RCC's \href{{http://rcc.its.psu.edu/user_guides/remote_connectivity/}}{website}.
+
+\subsection{Modules}
+\subsubsection{Introduction}
+A large amount of software has already been installed on RCC systems. You can access them through \textbf{modules}. Each module lets you add software packages to your environment. Once the software is added to your environment, you can
+freely access it and perform computations. To list all available modules, you can use the command \texttt{module avail}. To load a module in your environment, you can use the command \texttt{module load <software>/<version>}. You
+can find more information on the \href{http://rcc.its.psu.edu/user_guides/system_utilities/modules/}{modules section} on our website. 
+
+\subsubsection{Modules examples}
+\paragraph{Available software} List all software installed on the system 
+\begin{center}
+ \texttt{module avail}
+\end{center}
+
+\paragraph{Modules loaded} List all the software currently loaded by the user
+\begin{center}
+ \texttt{module list}
+\end{center}
+
+\paragraph{MPI} Loading the recommended MPI version, OpenMPI 1.6.5:
+\begin{center}
+ \texttt{module load openmpi/intel/1.6.5}
+\end{center}
+
+\paragraph{GCC} Loading the GNU compiler 4.8.2
+\begin{center}
+ \texttt{module load gcc/4.8.2}
+\end{center}
+
+\paragraph{CUDA} Loading CUDA 5.0 for GPU computing (only on Lion-GA)
+\begin{center}
+ \texttt{module load cuda/5.0}
+\end{center}
+
+\paragraph{Switching} Switching between two versions of GCC (from some version of GCC to 4.8.2):
+\begin{center}
+ \texttt{module switch gcc gcc/4.8.2}
+\end{center}
+
+\subsection{PBS}
+\subsubsection{Introduction}
+Direct connections to the clusters let you access a \textbf{login node}. Login nodes are used to perform simple tasks, such as compiling a program, or submitting a \textbf{job} through our resource manager and job scheduler, \textbf{PBS} and \textbf{Moab}, respectively. 
+To be able to run compute-intensive commands such as R, Python, MPI, you will have to submit a job to the queue. You can either submit non-interactive batch jobs, or interactive jobs:
+\begin{itemize}
+ \item Non-interactive batch jobs: a job script that contains PBS commands to request an overall amount of processor cores, memory, walltime, etc., and the subsequent command you would like to execute on a compute node. The job is submitted using \texttt{qsub}, and is run non-interactively 
+ when resources become available.
+ \item Interactive jobs: the command \texttt{qsub} can also be used to gain direct access to one or more compute nodes. Any command you would like to execute are then executed interactively. Such jobs are great for debugging and for short runtimes.
+\end{itemize}
+You can find more information on the \href{http://rcc.its.psu.edu/user_guides/system_utilities/pbs/}{PBS section} on our website. 
+For the rest of the exercises, we will be using \textbf{interactive jobs}. To submit an interactive job, use the command \texttt{qsub}, with the \texttt{-I} argument.
+
+\textbf{Remark} Once your interactive job starts, you will have to reload any modules you previously loaded in your environment.
+
+
+\subsubsection{Interactive job examples}
+\paragraph{One processor core request}
+\begin{center}
+\texttt{qsub -I -l nodes=1:ppn=1,walltime=01:00:00 -q astro-seminar}
+\end{center}
+
+will request one processor core (\textbf{ppn=1}) on one node (\textbf{nodes=1}), for one hour (\textbf{walltime=01:00:00}). The \texttt{-q} argument specifies a queue, which contains nodes that are reserved for this seminar.
+
+\paragraph{MPI}
+If you want to run MPI jobs, you will need more than one processor, across multiple nodes. You can therefore adjust the argument \texttt{ppn} and \texttt{nodes} to better suit your needs. For example:
+\begin{center}
+\texttt{qsub -I -l nodes=2:ppn=2,walltime=01:00:00 -q astro-seminar}
+\end{center}
+will request two processor cores per node, one two nodes, for a total of 4 processor cores, and a total runtime of 1 hour. You can therefore run 4 MPI processes at the most for that particular job.
+
+\paragraph{OpenMP}
+Same as MPI jobs; you will need more than one processor. However, OpenMP jobs can only run on one machine at the most. Therefore \texttt{nodes} has to be equal to 1. For example:
+\begin{center}
+\texttt{qsub -I -l nodes=1:ppn=6,walltime=01:30:00 -q astro-seminar}
+\end{center}
+will request six processor cores on one node, and a total runtime of 1.5 hour. You can therefore run up to 6 OpenMP threads for that particular job.
+
+\paragraph{GPU}
+GPU jobs will be run on Lion-GA. You can specify the total number of GPUs you would like to use with the argument \textbf{gpus} in \texttt{qsub}:
+\begin{center}
+\texttt{qsub -I -l nodes=1:ppn=2:gpus=2,walltime=01:30:00 -q astro-seminar}
+\end{center}
+will request 2 processor cores one 1 node, along with 2 GPUs. Note that using more than 1 node on Lion-GA is invalid. 
+
+
+\subsection{Exercises}
+\subsubsection{Source files}
+All the exercises have been uploaded to a Git repository. You will have to clone the repository, and then use the exercises source files. 
+To clone the repository:
+\begin{itemize}
+ \item[1.] Go into your home directory: \texttt{cd $\sim$/}
+ \item[2.] Clone the repository: 
+ \begin{center}
+   \texttt{git clone https://github.com/pytaunay/bayes-computing-astro-data.git}
+ \end{center}
+ This will create a directory named \texttt{bayes-computing-astro-data}.
+ \item[3.] Go into the newly created directory
+ \begin{center}
+   \texttt{cd bayes-computing-astro-data}
+ \end{center}
+ \item[4.] List the available files
+ \begin{center}
+   \texttt{ls .}
+ \end{center} 
+ \item[5.] Examples for each lesson covered can be found in their corresponding folder. Exercises are under the folder \texttt{Exercises}.
+\end{itemize}
+
+
+\subsubsection{Data files}
+The data files will be made available in a temporary directory of Lion-XV: \texttt{/tmp/astro-seminar}. To copy them:
+\begin{itemize}
+ \item[1.] Go into your home directory: \texttt{cd $\sim$/}
+ \item[2.] Create a directory for the data: \texttt{mkdir data}
+ \item[3.] Copy all the files:
+\begin{center}
+ \texttt{cp /tmp/astro-seminar/* $\sim$/data/}
+\end{center}
+ \item[4.] Check that files are in the data directory:
+\begin{center}
+ \texttt{ls $\sim$/data/}
+\end{center}
+\end{itemize}
+
+
+\newpage
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Scalability study}
+\textit{Notions covered}
+\begin{itemize}
+ \item \textit{Lesson 1: scalability, weak scaling, strong scaling, speed--up}
+ \item \textit{Lesson 2: OpenMP, MPI }
+\end{itemize}
+
+\subsection{Introduction}
+Login to Lion-XV: the domain name is \texttt{lionxv.rcc.psu.edu}
+
+
+\subsubsection{Compiling programs}
+An OpenMP and MPI implementation of the log--likelihood calculation presented in Lesson 2 are provided. They are located in the folder
+\begin{center}
+ \texttt{Exercises/Scalability/OpenMP}
+\end{center}
+and 
+\begin{center}
+ \texttt{Exercises/Scalability/MPI}
+\end{center}
+respectively.
+Each program will have to be compiled in order to be used. A Makefile has been provided for your convenience in both cases.
+\paragraph{OpenMP} To compile the OpenMP exercise:
+\begin{itemize}
+ \item[1.] Go in the OpenMP directory 
+\begin{center}
+ \texttt{cd $\sim$/bayes-computing-astro-data/Exercises/Scalability/OpenMP}
+\end{center}
+ \item[2.] Create directories for temporary object files and the binary:
+\begin{center}
+ \texttt{mkdir obj}
+\end{center}
+\begin{center}
+ \texttt{mkdir bin}
+\end{center} 
+ 
+\item[3.] Run the \texttt{make} command. The program should now be compiling. Once the compilation is done, the program will be found in the \texttt{bin/} directory, under the name \texttt{omp\_example}.
+\end{itemize}
+
+The Intel MKL library has to be loaded in your environment in order to use the OpenMP program. Simply load the module \texttt{mkl} with the command \texttt{module load mkl} before starting to use the program. 
+
+\paragraph{MPI} To compile the MPI exercise:
+\begin{itemize}
+ \item[1.] Go in the MPI directory 
+\begin{center}
+ \texttt{cd $\sim$/bayes-computing-astro-data/Exercises/Scalability/MPI}
+\end{center}
+ \item[2.] Create directories for temporary object files and the binary:
+\begin{center}
+ \texttt{mkdir obj}
+\end{center}
+\begin{center}
+ \texttt{mkdir bin}
+\end{center} 
+\item[3.] Load OpenMPI in your environment: \texttt{module load openmpi/intel/1.6.5} 
+ 
+\item[4.] Run the \texttt{make} command. The program should now be compiling. Once the compilation is done, the program will be found in the \texttt{bin/} directory, under the name \texttt{mpi\_example}.
+\end{itemize}
+
+The Intel MKL library and OpenMPI have to be loaded in your environment in order to use the MPI program. Simply load the module \texttt{mkl} and \texttt{openmpi/intel/1.6.5} with the command \texttt{module load mkl} and 
+\texttt{module load openmpi/intel/1.6.5}, respectively, before starting to use the program. 
+
+
+\subsubsection{Submitting a job}
+Please remember that resources are limited ! If you are done with your job, just hit Ctrl+D to exit the job and free resources for other users.
+
+\paragraph{OpenMP} To run the OpenMP program, a job with up to 4 processor cores can be submitted:
+\begin{center}
+ \texttt{qsub -I -l nodes=1:ppn=4,walltime=02:00:00 -q astro-seminar}
+\end{center}
+
+\paragraph{MPI} To run the MPI program, a job with up to 4 processor cores on multiple nodes can be submitted:
+\begin{center}
+ \texttt{qsub -I -l nodes=2:ppn=2,walltime=02:00:00 -q astro-seminar}
+\end{center}
+
+\subsubsection{Running a program}
+\paragraph{OpenMP} First load the MKL module
+\begin{center}
+ \texttt{module load mkl}
+\end{center}
+Once done, you can run the command to execute the OpenMP program:
+\begin{center}
+ \texttt{./omp\_example -sx 32 -nobs 10000 -data $\sim$/data -ns 100} 
+\end{center}
+where
+\begin{itemize}
+ \item \texttt{-sx} is the size of the considered random variables (always 32).
+ \item \texttt{-nobs} is the total number of observations (between 1 and 1000000).
+ \item \texttt{-data} the location of the data.
+ \item \texttt{-ns} the total number of runs to perform to get accurate timing results.
+ \end{itemize}
+
+
+\paragraph{MPI} First load the MKL and the OpenMPI modules:
+\begin{center}
+ \texttt{module load mkl}
+\end{center}
+\begin{center}
+ \texttt{module load openmpi/intel/1.6.5}
+\end{center}
+Once done, you can run the command to execute the MPI program:
+\begin{center}
+ \texttt{mpirun -np 2 ./mpi\_example -sx 32 -nobs 10000 -data $\sim$/data -ns 100} 
+\end{center}
+where
+\begin{itemize}
+ \item \texttt{-np} is the total number of MPI processes to run.
+ \item \texttt{-sx} is the size of the considered random variables (always 32).
+ \item \texttt{-nobs} is the total number of observations (between 1 and 1000000).
+ \item \texttt{-data} the location of the data.
+ \item \texttt{-ns} the total number of runs to perform to get accurate timing results.
+ \end{itemize} 
+ 
+ 
+\subsection{Questions}
+\paragraph{Question 1} Study the scalability for OpenMP and MPI programs provided, for various number of processor cores (1,2, and 4), and number of observations (10, 100, 1000, 10000, 100000, and 1000000). Note that the total number
+of observations have to be dividable by the total number of processor cores. For example, it is not possible to run 10 observations and 4 processor cores. 
+
+The following quantities should be evaluated:
+\begin{itemize}
+ \item[a.] Speed-up,
+ \item[b.] Strong scaling, and
+ \item[c.] Weak scaling.
+\end{itemize}
+
+~\\
+\textbf{Reminders}
+\begin{itemize}
+ \item The environment variable \texttt{OMP\_NUM\_THREADS} controls the total number of OpenMP threads.
+\end{itemize}
+
+
+\paragraph{Question 2} Discuss the effect of the overall number of cores on the total runtime for OpenMP and MPI.
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
+
+
+\section{GPU}
+\textit{Notions covered}
+\begin{itemize}
+ \item \textit{Lesson 3: GPU architecture, GPU programming}
+\end{itemize}
+
+\subsection{Introduction}
+Disconnect from Lion-XV, then login to Lion-GA. The domain name for Lion-GA is \texttt{lionga.rcc.psu.edu}
+
+\subsubsection{Compiling programs}
+A GPU implementation of the log--likelihood calculation presented in Lesson 3 is provided. It is located in the folder
+\begin{center}
+ \texttt{Exercises/GPU}
+\end{center}
+
+The program will have to be compiled in order to be used. A Makefile has been provided for your convenience. To compile the GPU exercise:
+\begin{itemize}
+ \item[1.] Go in the GPU directory 
+\begin{center}
+ \texttt{cd $\sim$/bayes-computing-astro-data/Exercises/GPU}
+\end{center}
+ \item[2.] Create directories for temporary object files and the binary:
+\begin{center}
+ \texttt{mkdir obj}
+\end{center}
+\begin{center}
+ \texttt{mkdir bin}
+\end{center} 
+ 
+\item[3.] Load CUDA 5.5 in your environment: \texttt{module load cuda/5.5} 
+ 
+\item[4.] Run the \texttt{make} command. The program should now be compiling. Once the compilation is done, the program will be found in the \texttt{bin/} directory, under the name \texttt{cuda\_example}.
+\end{itemize}
+
+The Intel MKL library and CUDA have to be loaded in your environment in order to use the MPI program. Simply load the module \texttt{mkl} and \texttt{cuda/5.5} with the command \texttt{module load mkl} and 
+\texttt{module load openmpi/intel/1.6.5}, respectively, before starting to use the program. 
+
+
+\subsubsection{Submitting a job}
+Please remember that resources are limited ! If you are done with your job, just hit Ctrl+D to exit the job and free resources for other users.
+To run the GPU program, a job with up to 1 processor core and 1 GPU can be submitted:
+\begin{center}
+\texttt{qsub -I -l nodes=1:ppn=1:gpus=1,walltime=02:00:00 -q astro-seminar}
+\end{center}
+
+\subsubsection{Running the program} First load the CUDA module:
+\begin{center}
+ \texttt{module load cuda/5.5}
+\end{center}
+Once done, you can run the command to execute the CUDA program:
+\begin{center}
+ \texttt{./cuda\_example -sx 32 -nobs 10000 -data $\sim$/data -ns 100} 
+\end{center}
+where
+\begin{itemize}
+ \item \texttt{-sx} is the size of the considered random variables.
+ \item \texttt{-nobs} is the total number of observations.
+ \item \texttt{-data} the location of the data.
+ \item \texttt{-ns} the total number of runs to perform to get accurate timing results.
+ \end{itemize}
+
+\subsection{Questions}
+
+\paragraph{Question 1} Study the runtime of the provided log--likelihood program, for various number of observations (10, 100, 1000, 10000, 100000, and 1000000). Compare these results to the Scalability Study section.
+% \paragraph{Question 2} 
+% 
+% \paragraph{Expert} What to do when the total number of observations becomes too large for a single GPU (i.e. exceeding the total memory space) ? A simple approach can be
+
+
+\newpage
+
+
+\section{OpenMP}
+\textit{Notions covered}
+\begin{itemize}
+ \item \textit{Lesson 1: Resource contention}
+ \item \textit{Lesson 2: OpenMP, shared memory, race conditions}
+\end{itemize}
+
+\subsection{Introduction}
+Login to Lion-XV: the domain name is \texttt{lionxv.rcc.psu.edu}
+
+\subsubsection{Compiling programs}
+Two sample code will be run with OpenMP. They are located at
+\begin{center}
+ \texttt{Exercises/OpenMP/Code1}
+\end{center}
+and
+\begin{center}
+ \texttt{Exercises/OpenMP/Code2}
+\end{center}
+respectively.
+To compile an OpenMP program, please use the following command:
+\begin{center}
+ \texttt{gcc -std=c99 -fopenmp main.c}
+\end{center}
+This will create an executable named ``a.out''.
+
+\subsubsection{Submitting a job}
+Please remember that resources are limited ! If you are done with your job, just hit Ctrl+D to exit the job and free resources for other users.
+To run the OpenMP program, a job with up to 4 processor cores can be submitted:
+\begin{center}
+ \texttt{qsub -I -l nodes=1:ppn=4,walltime=02:00:00 -q astro-seminar}
+\end{center}
+
+
+\subsection{Code sample 1}
+The result printed on the screen is intended to be equal to the one plus the total number of threads running.
+\paragraph{Question 1} Compile the code in the \texttt{Code1} folder. Run the executable multiple times, for various number of threads (1 to 8). What happens ? 
+\paragraph{Question 2} How can you fix the code and still get the correct result ? Write as many solutions as you can.  
+\paragraph{Question 3} Run the original code through Valgrind with the helgrind tool to check for thread errors. Observe the different errors.
+\newline
+
+\textbf{Note} To run Valgrind with Helgrind on your ``a.out'' executable: 
+\begin{center}
+ \texttt{valgrind --tool=helgrind ./a.out}
+\end{center}
+
+
+
+\subsection{Code sample 2}
+This code is supposed to shift the content by 1 of a sequence of integers stored in an array. For example, the sequence $[0,1,2,3]$ will be shifted to $[-1,0,1,2]$. This behavior
+is achieved by assigning the content of the array at index $i-1$ to the index $i$: $X_{i} \leftarrow X_{i-1}$. 
+\paragraph{Question 1} Compile the code in the \texttt{Code2} folder. Run the executable multiple times, for various number of threads (1 to 8). What happens ? 
+\newline
+
+
+
+\paragraph{Question 2} The OpenMP clause \textbf{ordered} ``specifies a structured block in a loop region that will be executed in the order of the loop iterations.''  The \textbf{ordered} clause allows
+for sequential execution of the iterations. Use the \textbf{ordered} clause to fix the issue. The output should be the same as the serial application (i.e. one thread).
+
+
+\newpage
+
+\section{Input / Output (optional)}
+\textit{Notions covered}
+\begin{itemize}
+ \item \textit{Lesson 1: I/O}
+\end{itemize}
+
+
+
+It is possible in Unix to monitor the total number of voluntary and involuntary context switches, using files located \texttt{/proc/<PID>} directory. Specifically, the file \texttt{/proc/<PID>/sched} contains the lines \texttt{nr\_voluntary\_switches} and \texttt{nr\_involuntary\_switches} 
+to monitor these quantities. 
+
+\paragraph{Question 1} Edit the C code with the following modifications:
+\begin{itemize}
+ \item Remove all the log--likelihood calculations. Keep only the command line parser, and the data reader function.
+ \item Add a \texttt{for} loop of size \texttt{nsample} around the data reader routine.
+ \item Add a \texttt{sleep()} statement in the \texttt{for} loop, after the data has been parsed. The \texttt{sleep()} function takes a total number of seconds as its only argument. It results in the process going into a sleep state. 
+You will have to include the file \texttt{sys/unistd.h} to use the \texttt{sleep()} function.
+\end{itemize}
+Once the edits are in, compile the code.
+
+
+\paragraph{Question 2} Run the C code with a large number of samples, and observe the total amount of context switches. 
+\newline
+~\\
+\textbf{Unix Reminders}
+To get the process ID of a running process, you can use \texttt{top -u your\_username}. The left-most column will give you the PID. Once you have the PID, you can watch the growth of the total number of context switches by outputting the content of the file \texttt{/proc/<PID>/sched}. You can
+do so every N seconds using the command \texttt{watch}, e.g. \texttt{watch -n 1 /proc/<PID>/sched}.
+
+
+\paragraph{Question 3} Comment out the line that parses the data, and the \texttt{sleep} statement in the for loop. Add a long sleep statement (e.g. 20 or 30 seconds) \textbf{before} the \texttt{for} loop so you have time to get the PID of the application. Monitor the total number of context
+switches, and compare to the case with I/O.
+
+
+
+
+\newpage
+
+\section{MPI (optional)}
+\textit{Notions covered}
+\begin{itemize}
+ \item \textit{Lesson 2: MPI, collective calls}
+\end{itemize}
+
+\textbf{Problem statement} The goal of this section is to both implement a matrix-vector multiplication operation (GEMV), and to obtain the $L_{2}$ norm of the resulting vector, using MPI collective routines. A code skeleton is provided in the MPI folder. The total number
+of processes used to run the program should always divide the number of rows of the matrix, \texttt{MSIDE}.
+
+A possible approach is to divide the the matrix $M$ into submatrices $S$ of size \texttt{WORKLOAD}$\times$\texttt{MSIDE} amongst a team of processes, where \texttt{WORKLOAD} is the total number of rows divided by the total number of processes. 
+Each process then performs a GEMV on a smaller matrix $S$. Finally, results are concatenated together in a single vector. 
+
+
+\paragraph{Question 1} Divide the matrix $M$ into submatrices $S$ using an MPI collective call. 
+\paragraph{Question 2} Since all processes perform the product $S\times V$, send the vector V to all the processes, using an MPI collective call.
+\paragraph{Question 3} Each process now has a subvector, result of $S\times V$. Using an MPI collective call, retrieve the data from each process, and assemble it into the result vector \texttt{mpi\_res}.
+\paragraph{Question 4} Finally, we want the $L_{2}$ norm of the resulting vector $V$. Partial square and sum of squares have already been provided, and stored in \texttt{sv\_res}. Using an MPI collective call, calculate
+the overall sum of the square.
+\paragraph{Question 5} Add timers to compare the serial solution and the MPI solution. Discuss.
+
+
+
+
+
+
+\end{document}
