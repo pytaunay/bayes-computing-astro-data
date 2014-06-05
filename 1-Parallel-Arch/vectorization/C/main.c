@@ -27,7 +27,7 @@ int main() {
 	
 	double toc = omp_get_wtime();
 
-	printf("Total time: %f\n", toc-tic);
+	printf("Total time (s): %f\n", toc-tic);
 
 	free(R);
 	free(V1);

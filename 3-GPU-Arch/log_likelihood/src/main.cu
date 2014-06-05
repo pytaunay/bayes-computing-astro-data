@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 	}	
 
 	printf("Result: %f\n",res);
-	printf("Total time: %f\n",tot_time/(double)nsample);
+	printf("Total time (s): %f\n",tot_time/(double)nsample);
 
 	////////////////////////////////////////
 	/////////////// Clean up ///////////////

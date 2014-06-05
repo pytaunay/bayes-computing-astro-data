@@ -75,7 +75,7 @@ det_sig = read.csv(csvfile,header=FALSE)
 
 # Naive implementation
 naive_tot <- log_likelihood_naive(X,NOBS,isig,mu,det_sig)
-print("Naive timing")
+print("Naive timing (s)")
 
 res <- microbenchmark(log_likelihood_naive(X,NOBS,isig,mu,det_sig),times=100,unit='s')
 print(res)
@@ -85,7 +85,7 @@ print(naive_tot)
 
 # Vectorized
 vec_tot <- log_likelihood_vectorized(X,NOBS,isig,mu,det_sig)
-print("Vectorized timing")
+print("Vectorized timing (s)")
 
 res <- microbenchmark(log_likelihood_vectorized(X,NOBS,isig,mu,det_sig),times=100,unit='s')
 print(res)

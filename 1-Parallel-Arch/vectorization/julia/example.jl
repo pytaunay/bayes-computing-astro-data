@@ -89,11 +89,11 @@ print("\n")
 print(vec_sum)
 
 naive_time /= nsample
-print("\nNaive time\n")
+print("\nNaive time (s)\n")
 print(naive_time)
 
 vec_time /= nsample
-print("\n\nVectorized time\n")
+print("\n\nVectorized time (s)\n")
 print(vec_time)
 print("\n")
 

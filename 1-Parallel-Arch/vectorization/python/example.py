@@ -89,7 +89,7 @@ for i in range(0,NSAMPLE):
 	toc = time.time()
 	ave_naive += toc-tic
 	
-print "Naive time:" 
+print "Naive time (s):" 
 print ave_naive/NSAMPLE
 
 
@@ -100,7 +100,7 @@ for i in range(0,NSAMPLE):
 	toc = time.time()
 	ave_vec += toc-tic
 
-print "Vectorized time:" 
+print "Vectorized time (s):" 
 print ave_vec/NSAMPLE
 
 print "Results"
